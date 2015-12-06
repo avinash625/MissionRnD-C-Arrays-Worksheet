@@ -20,55 +20,44 @@ struct student {
 	char *name;
 	int score;
 };
-void sort(struct student *students, int first, int last){
-	int i, j, pivot;
+void sort2(struct student * students, int len)
+{
+	int i, j;
 	struct student temp;
-	if (students[first].score<students[last].score){
-		pivot = first;
-		i = first;
-		j = last;
-
-		while (i<j){
-			while (students[i].score >= students[pivot].score && i<last)
-				i++;
-			while (students[j].score<students[pivot].score)
-				j--;
-			if (i<j){
-				temp = students[i];
-				students[i] = students[j];
-				students[j] = temp;
+	for (i = 0; i < (len - 1); i++)
+	{
+		for (j = 0; j < len - i - 1; j++)
+		{
+			if (students[j].score < students[j + 1].score)
+			{
+				temp = students[j];
+				students[j] = students[j + 1];
+				students[j + 1] = temp;
 			}
 		}
-
-		temp = students[pivot];
-		students[pivot] = students[j];
-		students[j] = temp;
-		sort(students, first, j - 1);
-		sort(students, j + 1, last);
-
 	}
 }
+
 struct student ** topKStudents(struct student *students, int len, int K) {
 	struct student **result=NULL;
 	int i;
-	if (students == NULL || len < 0 || K < 0 || K > len)
+	if (students == NULL || len < 0 || K <= 0 )
 		return NULL;
-	sort(students, 0, len - 1);
-	(*result) = (struct student *) malloc(sizeof(struct student)*K);
+	sort2(students, len);
+	(result) =(struct student **) malloc(sizeof(struct student *)*K);
 	if (K == 1)
 	{
-		result[0] = (struct student *)malloc(sizeof(struct student));
-		result[0]->name = students[len - 1].name;
-		result[0]->score = students[len - 1].score;
+		(*result) = (struct student *)malloc(sizeof(struct student ));
+		result[0]->name = students[0].name;
+		result[0]->score = students[0].score;
 	}
 	else
 	{
-		result = (struct student **)malloc(sizeof(struct student)*K);
-		for (i = len - K,K=K-1; i < len; i++,K--)
+		for (i = 0; i < K; i++)
 		{
-			result[K] = (struct student *)malloc(sizeof(struct student));
-			result[K]->name = students[i].name;
-			result[K]->score = students[i].score;
+			result[i] = (struct student *)malloc(sizeof(struct student));
+			result[i]->name = students[i].name;
+			result[i]->score = students[i].score;
 		}
 	}
 	return result;
